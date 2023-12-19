@@ -1,0 +1,10 @@
+main {
+    display: flex;
+    justify-content: center;
+    height: 80vh; /* Wysokoœæ obszaru treœci, mo¿esz dostosowaæ do swoich potrzeb */
+}
+
+.content {
+    text-align: center;
+    /*background-color:#FAE3D9;*/
+}

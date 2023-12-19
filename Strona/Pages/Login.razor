@@ -1,0 +1,27 @@
+﻿@page "/login"
+
+<PageTitle>Login</PageTitle>
+
+<form id="loginForm" method="post">
+    <div>
+        <label for="username">Username</label>
+        <input type="text" id="username" name="username" required />
+    </div>
+
+    <div>
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" required />
+    </div>
+    <div id="loginButton">
+        <div>
+            <a href="/login/passwordRecovery" id="forgot-password">Forgot password?</a>
+            <a href="/register" id="create-account">Create new account</a>
+        </div>
+        <button type="submit">Log in</button>
+    </div>
+</form>
+
+@code {
+
+
+}

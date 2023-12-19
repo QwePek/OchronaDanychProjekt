@@ -1,0 +1,62 @@
+﻿#registerButton {
+    display: flex;
+    justify-content: space-between;
+}
+
+/* Register */
+#registerForm {
+    background-color: #BBDED6; /* Kolor tła formularza */
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 500px;
+    text-align: left;
+    font-weight: bold;
+}
+
+#registerForm label {
+    display: block;
+    margin: 10px 0;
+    color: #fff; /* Kolor tekstu etykiet w formularzu */
+}
+
+#registerForm input {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 15px;
+    box-sizing: border-box;
+    border: 0px;
+    border-radius: 15px;
+    transition: border-radius 0.5s; 
+}
+
+    #registerForm input:focus {
+        border-radius: 0px;
+    }
+
+#registerForm button {
+    text-align: right;
+    background-color: #61C0BF; /* Kolor tła przycisku */
+    color: #edf2f4; /* Kolor tekstu na przycisku */
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+    #registerForm button:hover {
+        background-color: #4fb9b8;
+    }
+
+#login-page {
+    color: #fff;
+    text-decoration: none;
+    font-size: 12px;
+    display: block;
+    transition: color 0.2s;
+}
+
+#login-page:hover {
+    color: #61C0BF;
+}

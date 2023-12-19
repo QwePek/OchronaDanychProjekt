@@ -1,0 +1,10 @@
+main[b-fr1tx3ekdy] {
+    display: flex;
+    justify-content: center;
+    height: 80vh; /* Wysoko�� obszaru tre�ci, mo�esz dostosowa� do swoich potrzeb */
+}
+
+.content[b-fr1tx3ekdy] {
+    text-align: center;
+    /*background-color:#FAE3D9;*/
+}
