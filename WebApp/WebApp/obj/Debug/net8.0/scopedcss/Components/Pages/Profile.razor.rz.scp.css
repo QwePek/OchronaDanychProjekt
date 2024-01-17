@@ -1,0 +1,41 @@
+.profile-container[b-rcsjrqt2hw] {
+    max-width: 1000px;
+    margin: 20px auto;
+    padding: 20px;
+    border-radius: 30px;
+    box-shadow: 1px 3px 10px var(--form-box-shadow);
+    background-color: var(--background);
+}
+
+.profile-info[b-rcsjrqt2hw] {
+    display: flex;
+    flex-direction: column;
+    font-size:1.4em;
+}
+
+    .profile-info p[b-rcsjrqt2hw] {
+        margin: 5px 0;
+    }
+
+[b-rcsjrqt2hw] .quickgrid[theme=corporate] {
+    font-family: 'Comic Sans MS', 'Times New Roman', serif;
+    color: red;
+}
+
+    [b-rcsjrqt2hw] .quickgrid[theme=corporate] .col-title {
+        gap: 0.4rem; /* Separate the sort indicator from title text */
+        font-weight: bold;
+        text-transform: uppercase;
+    }
+
+    [b-rcsjrqt2hw] .quickgrid[theme=corporate] .sort-indicator {
+        color: blue;
+    }
+
+    [b-rcsjrqt2hw] .quickgrid[theme=corporate] button.col-title:hover, [b-rcsjrqt2hw] .quickgrid[theme=corporate] .col-options-button:hover {
+        background-color: hotpink;
+    }
+
+    [b-rcsjrqt2hw] .quickgrid[theme=corporate] button.col-title:active, [b-rcsjrqt2hw] .quickgrid[theme=corporate] .col-options-button:active {
+        background-color: yellow;
+    }

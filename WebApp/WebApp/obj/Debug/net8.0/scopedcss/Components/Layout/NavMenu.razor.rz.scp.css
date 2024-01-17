@@ -1,0 +1,57 @@
+#navbar-moj[b-cfr3pjxbop] {
+    display: flex;
+    background: var(--palette-1);
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+[b-cfr3pjxbop] .navItem {
+}
+
+    [b-cfr3pjxbop] .navItem a {
+        padding: 20px 50px;
+        display: block;
+        text-decoration: none;
+        color: var(--font-color-2);
+        font-size: 1.4em;
+        font-weight: bold;
+        transition: background-color 0.3s ease-in-out;
+    }
+
+        [b-cfr3pjxbop] .navItem a:hover {
+            background-color: var(--palette-2-hover);
+        }
+
+.language-selector[b-cfr3pjxbop] {
+
+}
+
+.active[b-cfr3pjxbop] {
+    background-color: var(--palette-3);
+}
+
+.theme-selector[b-cfr3pjxbop] {
+    display:flex;
+    align-items:center;
+}
+
+.navigation-bar[b-cfr3pjxbop] {
+    display:flex;
+    flex-direction:row;
+    justify-content:center;
+}
+
+.logout-link[b-cfr3pjxbop] {
+    padding: 20px 50px;
+    display: block;
+    font-size: 1.4em;
+    font-weight: bold;
+    background-color: var(--palette-1);
+    border: 0;
+    color: var(--font-color-2);
+    cursor: pointer;
+    transition: background-color 0.3s ease-in-out;
+}
+    .logout-link:hover[b-cfr3pjxbop] {
+        background-color: var(--palette-2-hover);
+    }

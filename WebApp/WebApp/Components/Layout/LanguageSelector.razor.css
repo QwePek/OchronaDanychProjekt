@@ -1,0 +1,21 @@
+﻿.languages {
+}
+
+    .languages a {
+        color: var(--font-color-2);
+        font-weight: bold;
+        cursor: pointer;
+        font-size: 1em;
+        padding: 24px 3px;
+        display: inline-block;
+        margin-left:10px;
+
+        position:relative;
+        top:0px;
+        transition: top 0.5s, color 0.3s;
+    }
+
+        .languages a:hover {
+            color: var(--font-color-2-hover);
+            top: -3px;
+        }

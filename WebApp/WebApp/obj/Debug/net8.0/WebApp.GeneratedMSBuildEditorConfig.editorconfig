@@ -1,0 +1,91 @@
+is_global = true
+build_property.TargetFramework = net8.0
+build_property.TargetPlatformMinVersion = 
+build_property.UsingMicrosoftNETSdkWeb = true
+build_property.ProjectTypeGuids = 
+build_property.InvariantGlobalization = 
+build_property.PlatformNeutralAssembly = 
+build_property.EnforceExtendedAnalyzerRules = 
+build_property._SupportedPlatformList = Linux,macOS,Windows
+build_property.RootNamespace = WebApp
+build_property.RootNamespace = WebApp
+build_property.ProjectDir = G:\Visual Studio Projects\PAWIMProj\WebApp\WebApp\
+build_property.EnableComHosting = 
+build_property.EnableGeneratedComInterfaceComImportInterop = 
+build_property.RazorLangVersion = 8.0
+build_property.SupportLocalizedComponentNames = 
+build_property.GenerateRazorMetadataSourceChecksumAttributes = 
+build_property.MSBuildProjectDirectory = G:\Visual Studio Projects\PAWIMProj\WebApp\WebApp
+build_property._RazorSourceGeneratorDebug = 
+
+[G:/Visual Studio Projects/PAWIMProj/WebApp/WebApp/Components/App.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xBcHAucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[G:/Visual Studio Projects/PAWIMProj/WebApp/WebApp/Components/Pages/Error.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xFcnJvci5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[G:/Visual Studio Projects/PAWIMProj/WebApp/WebApp/Components/Pages/Home.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xIb21lLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[G:/Visual Studio Projects/PAWIMProj/WebApp/WebApp/Components/Pages/Test.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xUZXN0LnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[G:/Visual Studio Projects/PAWIMProj/WebApp/WebApp/Components/Pages/ThemeRefresher.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xUaGVtZVJlZnJlc2hlci5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[G:/Visual Studio Projects/PAWIMProj/WebApp/WebApp/Components/Pages/UserAll.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xVc2VyQWxsLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[G:/Visual Studio Projects/PAWIMProj/WebApp/WebApp/Components/Pages/UserEdit.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xVc2VyRWRpdC5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[G:/Visual Studio Projects/PAWIMProj/WebApp/WebApp/Components/Pages/Weather.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xXZWF0aGVyLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[G:/Visual Studio Projects/PAWIMProj/WebApp/WebApp/Components/Routes.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xSb3V0ZXMucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[G:/Visual Studio Projects/PAWIMProj/WebApp/WebApp/Components/_Imports.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xfSW1wb3J0cy5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[G:/Visual Studio Projects/PAWIMProj/WebApp/WebApp/Components/Layout/LanguageSelector.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xMYXlvdXRcTGFuZ3VhZ2VTZWxlY3Rvci5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = b-urmgkbi3uk
+
+[G:/Visual Studio Projects/PAWIMProj/WebApp/WebApp/Components/Layout/MainLayout.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xMYXlvdXRcTWFpbkxheW91dC5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = b-pui3qmsk44
+
+[G:/Visual Studio Projects/PAWIMProj/WebApp/WebApp/Components/Layout/NavMenu.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xMYXlvdXRcTmF2TWVudS5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = b-cfr3pjxbop
+
+[G:/Visual Studio Projects/PAWIMProj/WebApp/WebApp/Components/Layout/ThemeSelector.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xMYXlvdXRcVGhlbWVTZWxlY3Rvci5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = b-44k1g8p6lp
+
+[G:/Visual Studio Projects/PAWIMProj/WebApp/WebApp/Components/Pages/Login.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xMb2dpbi5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = b-iq1362wwd4
+
+[G:/Visual Studio Projects/PAWIMProj/WebApp/WebApp/Components/Pages/Microphone.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xNaWNyb3Bob25lLnJhem9y
+build_metadata.AdditionalFiles.CssScope = b-0m4gqlk7ku
+
+[G:/Visual Studio Projects/PAWIMProj/WebApp/WebApp/Components/Pages/Profile.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xQcm9maWxlLnJhem9y
+build_metadata.AdditionalFiles.CssScope = b-rcsjrqt2hw
+
+[G:/Visual Studio Projects/PAWIMProj/WebApp/WebApp/Components/Pages/Register.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xSZWdpc3Rlci5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = b-rw3p6uk6w2

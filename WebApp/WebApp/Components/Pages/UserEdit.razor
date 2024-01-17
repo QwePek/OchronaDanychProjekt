@@ -1,0 +1,112 @@
+﻿@page "/User/Edit/{ID:int}"
+@rendermode InteractiveAuto
+
+@using Microsoft.AspNetCore.Components.QuickGrid
+@using Blazored.LocalStorage
+@inject ILocalStorageService LocalStorage
+@inject IUserService userService
+@inject ITransactionService messageService
+@inject NavigationManager Navigation
+@inject HttpClient Http
+
+<ThemeRefresher />
+
+<PageTitle>Edit User</PageTitle>
+
+@* <h1>@_localizer[nameof(Resource.Users)]</h1>
+ *@@*TODO: DODAJ TUTAJ FORMULARZ I DODAJ JESZCZE WIELOJEZYKOWOSC*@
+
+<h2>@var</h2>
+@if (messages == null || loading)
+{
+	<p><em>Loading...</em></p>
+}
+else if(messages.Count == 0)
+{
+	<h2>No messages to show!</h2>
+}
+else
+{
+	<QuickGrid Class="table" Items="@messages.AsQueryable()">
+		<PropertyColumn Property="@(p => p.Content)" Sortable="true" />
+		<PropertyColumn Property="@(p => p.Date)" Sortable="true" />
+		<TemplateColumn>
+			<button class="btn btn-wlasny" @onclick="@(() => TurnOnEdit(context))">Edit</button>
+			<button class="btn btn-wlasny" @onclick="@(() => DeleteMessage(context))">Delete</button>
+		</TemplateColumn>
+	</QuickGrid>
+}
+
+@code
+{
+	[Parameter]
+	public int ID { get; set; }
+	string var = "1";
+	User editingUser;
+	bool loading = true;
+
+	List<Transaction> messages = new List<Transaction>();
+
+	protected override async Task OnAfterRenderAsync(bool firstRender)
+	{
+		if (firstRender)
+		{
+			//the param will be set now
+			//ServiceResponse<User> resp = await Http.GetFromJsonAsync<ServiceResponse<User>>(Navigation.BaseUri + "User/Get/?ID=" + ID.ToString());
+			Response<List<Transaction>>? resp = await Http.GetFromJsonAsync<Response<List<Transaction>>>(Navigation.BaseUri + "Message/GetUserMsg/" + ID.ToString());
+			loading = false;
+			// //var resp = await Http.GetFromJsonAsync < ServiceResponse<List<Message>>(Navigation.BaseUri + "Message/GetUserMsg/?ID=" + ID.ToString());
+			if (resp != null && resp.Success)
+			{
+				messages = resp.Data;
+				//var = editingUser.FirstName + "  " + editingUser.LastName;
+			}
+
+			StateHasChanged();
+		}
+	}
+
+	public async Task TurnOnEdit(Transaction msg)
+	{
+		SweetAlertResult result = await sweetServ.FireAsync(new SweetAlertOptions
+			{
+				Title = "Edit message",
+				Input = SweetAlertInputType.Text,
+				//InputValue = msg.Data,
+				ShowCancelButton = true,
+				ConfirmButtonText = "Done",
+				CancelButtonText = "Cancel"
+			});
+
+		if(result.IsConfirmed)
+		{
+			//msg.Data = result.Value;
+			await messageService.UpdateTransactionAsync(msg);
+		}
+	}
+
+	public async Task DeleteMessage(Transaction msg)
+	{
+		SweetAlertResult result = await sweetServ.FireAsync(new SweetAlertOptions
+			{
+				Title = "Delete",
+				Text = "Are you sure you want to delete this record?",
+				Icon = SweetAlertIcon.Warning,
+				ShowCancelButton = true,
+				ConfirmButtonText = "Yes",
+				CancelButtonText = "Cancel"
+			});
+
+		if (!string.IsNullOrEmpty(result.Value))
+		{
+			await sweetServ.FireAsync(
+					"Deleted",
+					"Record has been deleted.",
+					SweetAlertIcon.Success
+					);
+
+			await messageService.DeleteTransactionAsync(msg.Id);
+			messages.Remove(msg);
+		}
+	}
+}

@@ -1,0 +1,31 @@
+﻿@using Blazored.LocalStorage
+@inject ILocalStorageService LocalStorage
+@using Blazr.RenderState
+@inject IBlazrRenderStateService RenderState
+
+@code {
+    public enum DisplayMode
+    {
+        Light,
+        Dark,
+        System
+    }
+
+    private IJSObjectReference? module;
+
+    [Inject] private IJSRuntime JSRuntime { get; set; } = default!;
+
+    protected override async Task OnInitializedAsync()
+    {
+        // exist early
+        if (this.RenderState.IsPreRender)
+            return;
+
+        module = await JSRuntime.InvokeAsync<IJSObjectReference>("import", "./js/themeSelector.js");
+
+        string k = await LocalStorage.GetItemAsStringAsync("Theme");
+        await module.InvokeVoidAsync("onDisplayModeChanged", $"{k}");
+
+        StateHasChanged();
+    }
+}

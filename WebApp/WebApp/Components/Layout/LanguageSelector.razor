@@ -1,0 +1,25 @@
+﻿@using System.Globalization
+@using Blazored.LocalStorage
+@rendermode InteractiveServer
+
+@inject ILocalStorageService LocalStorage
+@inject NavigationManager Navigation
+
+<div class="languages">
+    <a @onclick="@(async () => await LanguageChangedAsync("pl-PL"))">PL</a>
+    @*<span class="vertical-divider"></span>*@
+    <a @onclick="@(async () => await LanguageChangedAsync("en-US"))">EN</a>
+</div>
+
+@code {
+    public async Task LanguageChangedAsync(string languageCode)
+    {
+        CultureInfo culture = CultureInfo.GetCultureInfo(languageCode);
+        CultureInfo.DefaultThreadCurrentCulture = culture;
+        CultureInfo.DefaultThreadCurrentUICulture = culture;
+        await LocalStorage.SetItemAsStringAsync("Language", culture.Name);
+
+        //Refreshing site
+        Navigation.NavigateTo(Navigation.Uri, forceLoad: true);
+    }
+}

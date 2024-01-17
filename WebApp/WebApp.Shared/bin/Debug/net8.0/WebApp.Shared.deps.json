@@ -1,0 +1,28 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v8.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v8.0": {
+      "WebApp.Shared/1.0.0": {
+        "runtime": {
+          "WebApp.Shared.dll": {}
+        },
+        "resources": {
+          "pl/WebApp.Shared.resources.dll": {
+            "locale": "pl"
+          }
+        }
+      }
+    }
+  },
+  "libraries": {
+    "WebApp.Shared/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}

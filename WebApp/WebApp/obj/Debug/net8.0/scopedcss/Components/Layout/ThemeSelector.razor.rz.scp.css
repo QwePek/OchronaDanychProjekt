@@ -1,0 +1,76 @@
+.theme-toggle.theme-toggle--reversed .theme-toggle__classic[b-44k1g8p6lp] {
+    transform: scale(-1, 1);
+}
+
+.theme-toggle[b-44k1g8p6lp] {
+    --theme-toggle__classic--duration: 500ms;
+    color: white;
+    transition: color 0.5s ease-in-out;
+}
+
+.theme-toggle__classic path[b-44k1g8p6lp] {
+    transition-timing-function: cubic-bezier(0, 0, 0.15, 1.25);
+    transform-origin: center;
+    transition-duration: calc(var(--theme-toggle__classic--duration) * 0.8);
+}
+
+.theme-toggle__classic g path[b-44k1g8p6lp] {
+    transition-property: opacity, transform;
+    transition-delay: calc(var(--theme-toggle__classic--duration) * 0.2);
+}
+
+.theme-toggle__classic :first-child path[b-44k1g8p6lp] {
+    transition-property: transform, d;
+}
+
+.theme-toggle--toggled:not(label).theme-toggle .theme-toggle__classic g path[b-44k1g8p6lp],
+.theme-toggle input[type=checkbox]:checked ~ .theme-toggle__classic g path[b-44k1g8p6lp] {
+    transform: scale(0.5) rotate(45deg);
+    opacity: 0;
+    transition-delay: 0s;
+}
+
+.theme-toggle--toggled:not(label).theme-toggle .theme-toggle__classic :first-child path[b-44k1g8p6lp],
+.theme-toggle input[type=checkbox]:checked ~ .theme-toggle__classic :first-child path[b-44k1g8p6lp] {
+    d: path("M-12 5h30a1 1 0 0 0 9 13v24h-39Z");
+    transition-delay: calc(var(--theme-toggle__classic--duration) * 0.2);
+}
+
+@supports not (d: path("")) {
+    .theme-toggle--toggled:not(label).theme-toggle .theme-toggle__classic :first-child path[b-44k1g8p6lp],
+    .theme-toggle input[type=checkbox]:checked ~ .theme-toggle__classic :first-child path[b-44k1g8p6lp] {
+        transform: translate3d(-12px, 10px, 0);
+    }
+}
+
+.theme-toggle[b-44k1g8p6lp] {
+    border: none;
+    background: none;
+    cursor: pointer;
+}
+
+    .theme-toggle input[type=checkbox][b-44k1g8p6lp] {
+        display: none;
+    }
+
+    .theme-toggle .theme-toggle-sr[b-44k1g8p6lp] {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border-width: 0;
+    }
+
+@media (prefers-reduced-motion: reduce) {
+    .theme-toggle:not(.theme-toggle--force-motion) *[b-44k1g8p6lp] {
+        transition: none !important;
+    }
+}
+
+.theme-toggle.theme-toggle--toggled[b-44k1g8p6lp] {
+    color: black;
+}

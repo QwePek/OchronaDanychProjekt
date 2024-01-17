@@ -1,0 +1,175 @@
+﻿@page "/profile"
+@using System.Security.Claims
+@using Microsoft.AspNetCore.Components.QuickGrid
+@using WebApp.Shared.DTO
+@attribute [Authorize]
+@rendermode InteractiveAuto
+@inject NavigationManager Navigation
+@inject HttpClient Http
+@inject ITransactionService msgService
+
+<PageTitle>@_localizer[nameof(Resource.TitleProfile)]</PageTitle>
+
+<ThemeRefresher />
+
+@if(loadedUser == null)
+{
+	<h2>@_localizer[nameof(Resource.Loading)]</h2>
+}
+else
+{
+	<div class="profile-container">
+		<div class="profile-info">
+			<p><strong>@_localizer[nameof(Resource.Email)]:</strong> @loadedUser.Email</p>
+			<p><strong>@_localizer[nameof(Resource.FirstName)]:</strong> @loadedUser.FirstName</p>
+			<p><strong>@_localizer[nameof(Resource.LastName)]:</strong> @loadedUser.LastName</p>
+			<p><strong>@_localizer[nameof(Resource.BirthDate)]:</strong> @loadedUser.BirthDate</p>
+		</div>
+
+	<button @onclick="()=>AddNewMessage()">Add new message</button>
+	@if (messages == null || loading)
+	{
+		<p><em>@_localizer[nameof(Resource.LoadingMsg)]</em></p>
+	}
+	else if (messages.Count == 0)
+	{
+		<h2>@_localizer[nameof(Resource.NoMessages)]</h2>
+	}
+	else
+	{
+		<div class="grid">
+			<QuickGrid Items="@messages.AsQueryable()">
+				<PropertyColumn Property="@(p => p.Content)" Sortable="true" />
+				<PropertyColumn Property="@(p => p.Date)" Sortable="true" />
+				<TemplateColumn>
+						<button class="btn btn-wlasny" @onclick="@(() => TurnOnEdit(context))">@_localizer[nameof(Resource.MsgEdit)]</button>
+						<button class="btn btn-wlasny" @onclick="@(() => DeleteMessage(context))">@_localizer[nameof(Resource.MsgDelete)]</button>
+				</TemplateColumn>
+			</QuickGrid>
+		</div>
+	}
+	</div>
+}
+
+@code {
+
+	User? loadedUser = null;
+	List<Transaction> messages = new List<Transaction>();
+	bool loading = true;
+
+	[CascadingParameter]
+	private Task<AuthenticationState>? authenticationState { get; set; }
+
+	protected override async Task OnAfterRenderAsync(bool firstRender)
+	{
+		if (firstRender)
+		{
+			if (authenticationState is not null)
+			{
+				var authState = await authenticationState;
+				var user = authState?.User;
+
+				if (user?.Identity is not null && user.Identity.IsAuthenticated)
+				{
+					string userID = "";
+					var claims = user.Claims.ToList();
+					foreach(var c in claims)
+					{
+						if (c.Type == ClaimTypes.NameIdentifier)
+							userID = c.Value;
+					}
+					if (userID == "")
+						return;
+
+					Response<User>? resp = await Http.GetFromJsonAsync<Response<User>>(Navigation.BaseUri + "User/Get/" + userID);
+					if (resp != null && resp.Success)
+						loadedUser = resp.Data;
+
+					await refreshMessages(userID);
+					StateHasChanged();
+				}
+			}
+		}
+	}
+
+	public async Task TurnOnEdit(Transaction msg)
+	{
+		SweetAlertResult result = await sweetServ.FireAsync(new SweetAlertOptions
+			{
+				Title = "Edit message",
+				Input = SweetAlertInputType.Text,
+				//InputValue = msg.Data,
+				ShowCancelButton = true,
+				ConfirmButtonText = "Done",
+				CancelButtonText = "Cancel"
+			});
+
+		if (result.IsConfirmed)
+		{
+			//msg.Data = result.Value;
+			await Http.PutAsJsonAsync<Transaction>(Navigation.BaseUri + "Message/Update/" + msg.Id, msg);
+			//await messageService.UpdateMessageAsync(msg);
+		}
+	}
+
+	public async Task DeleteMessage(Transaction msg)
+	{
+		SweetAlertResult result = await sweetServ.FireAsync(new SweetAlertOptions
+			{
+				Title = "Delete",
+				Text = "Are you sure you want to delete this record?",
+				Icon = SweetAlertIcon.Warning,
+				ShowCancelButton = true,
+				ConfirmButtonText = "Yes",
+				CancelButtonText = "Cancel"
+			});
+
+		if (!string.IsNullOrEmpty(result.Value))
+		{
+			await sweetServ.FireAsync(
+					"Deleted",
+					"Record has been deleted.",
+					SweetAlertIcon.Success
+					);
+
+			await Http.DeleteAsync(Navigation.BaseUri + "Message/Delete/" + msg.Id.ToString());
+			messages.Remove(msg);
+		}
+	}
+
+	public async Task AddNewMessage()
+	{
+		SweetAlertResult result = await sweetServ.FireAsync(new SweetAlertOptions
+			{
+				Title = "Edit message",
+				Input = SweetAlertInputType.Text,
+				ShowCancelButton = true,
+				ConfirmButtonText = "Done",
+				CancelButtonText = "Cancel"
+			});
+
+		if (result.IsConfirmed)
+		{
+			TransactionDTO newMsg = new TransactionDTO();
+			// newMsg.Data = result.Value;
+			// newMsg.UserId = loadedUser.Id;
+			// newMsg.Date = DateTime.Now; 
+
+			//await Http.PostAsJsonAsync<Message>(Navigation.BaseUri + "Message/Add", newMsg);
+			await msgService.AddTransactionAsync(newMsg);
+			await refreshMessages(loadedUser.Id.ToString());
+		}
+	}
+
+	public async Task refreshMessages(string userID)
+	{
+		loading = true;
+		Response<List<Transaction>>? mess = await Http.GetFromJsonAsync<Response<List<Transaction>>>(Navigation.BaseUri + "Message/GetUserMsg/" + userID);
+		if (mess != null && mess.Success)
+			messages = mess.Data;
+
+		loading = false;
+
+		StateHasChanged();
+	}
+}

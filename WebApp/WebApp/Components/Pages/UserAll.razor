@@ -1,0 +1,118 @@
+﻿@page "/User/All"
+@rendermode InteractiveAuto
+
+@using Microsoft.AspNetCore.Components.QuickGrid
+@using Microsoft.AspNetCore.Mvc
+@using WebApp.Shared
+@using WebApp.Shared.Model
+@using Blazored.LocalStorage
+@using WebApp.Shared.Services
+@inject ILocalStorageService LocalStorage
+@inject NavigationManager Navigation
+@inject IJSRuntime jsRuntime
+@inject HttpClient Http
+
+<ThemeRefresher />
+
+<PageTitle>Page Users</PageTitle>
+
+@* <h1>@_localizer[nameof(Resource.Users)]</h1>
+ *@
+@if (users == null || users.Data == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <QuickGrid Class="table" Items="@users.Data.AsQueryable()">
+        <PropertyColumn Property="@(p => p.FirstName)" Sortable="true" />
+        <PropertyColumn Property="@(p => p.LastName)" Sortable="true" />
+        <PropertyColumn Property="@(p => p.Email)" Sortable="true" />
+        <PropertyColumn Property="@(p => p.BirthDate)" Sortable="true" />
+        <TemplateColumn>
+            <button class="btn btn-wlasny" @onclick="@(() => TurnOnEdit(context))">Edit</button>
+            <button class="btn btn-wlasny" @onclick="@(() => DeleteUser(context))">Delete</button>
+        </TemplateColumn>
+    </QuickGrid>
+}
+
+@code {
+    private Response<List<User>>? users;
+    private string selected = "-1";
+
+    GridSort<User> sortByName = GridSort<User>
+        .ByAscending(p => p.LastName)
+        .ThenAscending(p => p.FirstName);
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            users = await Http.GetFromJsonAsync<Response<List<User>>>(Navigation.BaseUri + "User/GetAll");
+            StateHasChanged();
+        }
+    }
+
+    public async Task TurnOnEdit(User usr)
+    {
+        //selected = "Editing " + usr.FirstName + " " + usr.LastName;
+        Navigation.NavigateTo($"/User/Edit/{usr.Id}");
+    }
+
+    public async Task DeleteUser(User usr)
+    {
+        SweetAlertResult result = await sweetServ.FireAsync(new SweetAlertOptions
+            {
+                Title = "Delete",
+                Text = "Are you sure you want to delete this record?",
+                Icon = SweetAlertIcon.Warning,
+                ShowCancelButton = true,
+                ConfirmButtonText = "Yes",
+                CancelButtonText = "Cancel"
+            });
+
+        if (!string.IsNullOrEmpty(result.Value))
+        {
+            await sweetServ.FireAsync(
+              "Deleted",
+              "Record has been deleted.",
+              SweetAlertIcon.Success
+              );
+
+            await Http.DeleteAsync(Navigation.BaseUri + "User/Delete/" + usr.Id.ToString());
+            users.Data.Remove(usr);
+        }
+    }
+}
+
+
+
+    @*     <table class="table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>@_localizer[nameof(Resource.FirstName)]</th>
+                <th>@_localizer[nameof(Resource.SecondName)]</th>
+                <th>Email</th>
+                <th>@_localizer[nameof(Resource.BirthDate)]</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (int i = 0; i < users.Data.Count; i++)
+            {
+                int loopIndex = i;
+                <tr>
+                    <td>@users.Data[i].Id</td>
+                    <td>@users.Data[i].FirstName</td>
+                    <td>@users.Data[i].LastName</td>
+                    <td>@users.Data[i].Email</td>
+                    <td>@users.Data[i].BirthDate.ToShortDateString()</td>
+                    <td>
+                        <button @onclick="() => TurnOnEdit(loopIndex)" class="btn btn-wlasny" href="User/Edit">Edit</button>
+                        <button @onclick="() => DeleteUser(loopIndex)" class="btn btn-wlasny" href="User/Delete">Delete</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table> *@

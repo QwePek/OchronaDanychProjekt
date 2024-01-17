@@ -1,0 +1,41 @@
+﻿.profile-container {
+    max-width: 1000px;
+    margin: 20px auto;
+    padding: 20px;
+    border-radius: 30px;
+    box-shadow: 1px 3px 10px var(--form-box-shadow);
+    background-color: var(--background);
+}
+
+.profile-info {
+    display: flex;
+    flex-direction: column;
+    font-size:1.4em;
+}
+
+    .profile-info p {
+        margin: 5px 0;
+    }
+
+::deep .quickgrid[theme=corporate] {
+    font-family: 'Comic Sans MS', 'Times New Roman', serif;
+    color: red;
+}
+
+    ::deep .quickgrid[theme=corporate] .col-title {
+        gap: 0.4rem; /* Separate the sort indicator from title text */
+        font-weight: bold;
+        text-transform: uppercase;
+    }
+
+    ::deep .quickgrid[theme=corporate] .sort-indicator {
+        color: blue;
+    }
+
+    ::deep .quickgrid[theme=corporate] button.col-title:hover, ::deep .quickgrid[theme=corporate] .col-options-button:hover {
+        background-color: hotpink;
+    }
+
+    ::deep .quickgrid[theme=corporate] button.col-title:active, ::deep .quickgrid[theme=corporate] .col-options-button:active {
+        background-color: yellow;
+    }

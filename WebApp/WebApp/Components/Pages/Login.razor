@@ -1,0 +1,90 @@
+﻿@page "/login"
+@rendermode InteractiveAuto
+
+@using System.Text.Json
+@using Microsoft.AspNetCore.Components.Authorization
+@using System.Security.Claims
+@inject NavigationManager Navigation
+@inject HttpClient Http
+@inject AuthenticationStateProvider AuthenticationStateProvider
+
+<PageTitle>@_localizer[nameof(Resource.TitleLogin)]</PageTitle>
+
+<ThemeRefresher />
+
+<div style="display:flex;justify-content:center;">
+    <div id="form-container">
+        <h1>@_localizer[nameof(Resource.Login)]</h1>
+        <form action="/Login/Login" method="post">
+            <div class="input-container">
+                <label for="email">@_localizer[nameof(Resource.Email)]</label>
+                <input type="email" name="email">
+            </div>
+            <div class="input-container">
+                <label for="password">@_localizer[nameof(Resource.Password)]</label>
+                <input name="password" type="password" />
+            </div>
+            <AntiforgeryToken />
+            <input type="submit" class="btn btn-success btn-block" value="@_localizer[nameof(Resource.Login)]">
+        </form>
+    </div>
+</div>
+
+@*TODO: ZROBIC REJESTRACJE- DODAC MIGRACJE Z PASSWORD DO BAZY DANYCH, POTEM ZROBIC LOGOWANIE I ABY
+    PO ZALOGOWANIU SIE POKAZYWALO SIE OKNO ALL MESSAGES I TAM SIE WYSWIETLALY WSZYSTKIE WIADOMOSCI UZYTKOWNIKA
+
+    DODAC TEZ JAKIES OKNO SWOJEGO PROFILU I MOZLIWOSC USUNIECIA GO
+
+    POPRAWIENIE CSS CALEJ TEJ ROZJEBANEJ STRONY :)
+*@
+@code {
+    [SupplyParameterFromForm]
+    public LoginModel? loginModel { set; get; }
+
+    [CascadingParameter]
+    private Task<AuthenticationState>? authenticationState { get; set; }
+
+    protected override void OnInitialized() => loginModel ??= new();
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+            var user = authState.User;
+
+            StateHasChanged();
+        }
+    }
+
+    public async Task Submit()
+    {
+        //Tutaj możesz dodać logikę wysyłki formularza, na przykład używając HttpClient
+        HttpResponseMessage response = await Http.PostAsJsonAsync(Navigation.BaseUri + "Login/Login", loginModel);
+
+        //ServiceResponse<User> resp = await Http.GetFromJsonAsync<ServiceResponse<User>>(Navigation.BaseUri + "Login/Login", loginModel, jsonSerializerOptions);
+        if (response.IsSuccessStatusCode)
+        {
+            SweetAlertResult result = await sweetServ.FireAsync(new SweetAlertOptions
+                {
+                    Title = "Logged in",
+                    Text = "Successfully Logged in",
+                    Icon = SweetAlertIcon.Success,
+                    ConfirmButtonText = "OK",
+                });
+
+
+            //Navigation.NavigateTo(Navigation.BaseUri + "Test");
+        }
+        else
+        {
+            SweetAlertResult result = await sweetServ.FireAsync(new SweetAlertOptions
+                {
+                    Title = "Failed",
+                    Text = "Failed to login",
+                    Icon = SweetAlertIcon.Error,
+                    ConfirmButtonText = "OK",
+                });
+        }
+    }
+}

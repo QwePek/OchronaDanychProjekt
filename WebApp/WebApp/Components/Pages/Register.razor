@@ -1,0 +1,102 @@
+﻿@page "/register"
+@rendermode InteractiveAuto
+
+@using System.ComponentModel.DataAnnotations
+@inject NavigationManager Navigation
+@inject HttpClient Http
+
+<PageTitle>@_localizer[nameof(Resource.TitleRegister)]</PageTitle>
+
+<ThemeRefresher />
+
+<div style="display:flex;justify-content:center;">
+    <div id="form-container">
+        <h1>@_localizer[nameof(Resource.Register)]</h1>
+        <EditForm Model="@registerModel" OnValidSubmit="@Submit"  FormName="Register">
+            <div class="validation-right">
+                <DataAnnotationsValidator />
+                <ValidationSummary />
+            </div>
+            <div class="input-container">
+                <label for="username">@_localizer[nameof(Resource.Email)]</label>
+                <InputText @bind-Value="registerModel.Email" type="email"/>
+            </div>
+            <div style="display:flex;flex-direction:row;justify-content:center">
+                <div class="input-container">
+                    <label for="username">@_localizer[nameof(Resource.FirstName)]</label>
+                    <InputText @bind-Value="registerModel.FirstName"/>
+                </div>
+                <span style="padding:1px"></span>
+                <div class="input-container">
+                    <label for="username">@_localizer[nameof(Resource.LastName)]</label>
+                    <InputText @bind-Value="registerModel.LastName"/>
+                </div>
+            </div>
+                <div class="input-container">
+                    <label for="username">@_localizer[nameof(Resource.BirthDate)]</label>
+                    <InputDate Type="InputDateType.Date" @bind-Value="registerModel.BirthDate"/>
+                </div>
+            <div class="input-container">
+                <label for="password">@_localizer[nameof(Resource.Password)]</label>
+                <InputText @bind-Value="registerModel.Password" type="password" />
+            </div>
+            <button type="submit" class="btn btn-success btn-block" disabled="@disableButton">@_localizer[nameof(Resource.Register)]</button>
+        </EditForm>
+    </div>
+</div>
+
+
+@*TODO: ZROBIC REJESTRACJE- DODAC MIGRACJE Z PASSWORD DO BAZY DANYCH, POTEM ZROBIC LOGOWANIE I ABY
+    PO ZALOGOWANIU SIE POKAZYWALO SIE OKNO ALL MESSAGES I TAM SIE WYSWIETLALY WSZYSTKIE WIADOMOSCI UZYTKOWNIKA
+
+    DODAC TEZ JAKIES OKNO SWOJEGO PROFILU I MOZLIWOSC USUNIECIA GO
+
+    POPRAWIENIE CSS CALEJ TEJ ROZJEBANEJ STRONY :)
+*@
+
+@code {
+    [SupplyParameterFromForm]
+    public RegisterModel? registerModel { set; get; }
+    bool canRender = false;
+    string? disableButton = null;
+
+    protected override void OnInitialized()
+    {
+        registerModel ??= new();
+        registerModel.BirthDate = DateOnly.FromDateTime(DateTime.Now);
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+            canRender = true;
+    }
+
+    public async Task Submit()
+    {
+        disableButton = "disabled";
+        //Tutaj możesz dodać logikę wysyłki formularza, na przykład używając HttpClient
+        var resp = await Http.PostAsJsonAsync<RegisterModel>(Navigation.BaseUri + "Login/Register", registerModel);
+        if(resp != null && resp.StatusCode == System.Net.HttpStatusCode.InternalServerError)
+        {
+            SweetAlertResult result = await sweetServ.FireAsync(new SweetAlertOptions
+                {
+                    Title = "Failed",
+                    Text = "Failed to register user",
+                    Icon = SweetAlertIcon.Error,
+                    ConfirmButtonText = "OK",
+                });
+        }
+        else if(resp == null || resp.StatusCode == System.Net.HttpStatusCode.OK)
+        {
+            SweetAlertResult result = await sweetServ.FireAsync(new SweetAlertOptions
+                {
+                    Title = "Registered",
+                    Text = "Successfully registered user",
+                    Icon = SweetAlertIcon.Success,
+                    ConfirmButtonText = "OK",
+                });
+        }
+        disableButton = null;
+    }
+}

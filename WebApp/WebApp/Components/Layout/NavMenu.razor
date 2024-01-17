@@ -1,0 +1,82 @@
+﻿@inject NavigationManager Navigation
+@inject HttpClient Http
+
+<div>
+    <div id="navbar-moj">
+        <div class="language-selector">
+            <LanguageSelector />
+        </div>
+        <nav class="navigation-bar">
+            <AuthorizeView>
+                <Authorized>
+@*                 <div class="navItem">
+                    <NavLink ActiveClass="active" href="User/All">
+                        <span aria-hidden="true"></span> @_localizer[nameof(Resource.NavUsers)]
+                    </NavLink>
+                </div> *@
+                <div class="navItem">
+                    <NavLink ActiveClass="active" href="microphone">
+                        <span aria-hidden="true"></span> @_localizer[nameof(Resource.Microphone)]
+                    </NavLink>
+                </div>
+                <div class="navItem">
+                    <NavLink ActiveClass="active" href="profile">
+                            <span aria-hidden="true"></span>@_localizer[nameof(Resource.Profile)]
+                    </NavLink>
+                </div>
+                <div class="navItem">
+                    <form action="/Login/SignOut" method="post">
+                        <input class="logout-link" type="submit" value="@_localizer[nameof(Resource.Logout)]">
+                    </form>
+                </div>
+                </Authorized>
+                <NotAuthorized>
+                <div class="navItem">
+                    <NavLink ActiveClass="active" href="register">
+                        <span aria-hidden="true"></span>@_localizer[nameof(Resource.Register)]
+                    </NavLink>
+                </div>
+
+                <div class="navItem">
+                    <NavLink ActiveClass="active" href="login">
+                        <span aria-hidden="true"></span>@_localizer[nameof(Resource.Login)]
+                    </NavLink>
+                </div>
+                </NotAuthorized>
+            </AuthorizeView>
+        </nav>
+        <div class="theme-selector">
+            <ThemeSelector />
+        </div>
+    </div>
+</div>
+
+@* 
+ <div class="nav-scrollable" onclick="document.querySelector('.navbar-toggler').click()">
+    <nav class="flex-column">
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+                <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span>@_localizer[nameof(Resource.String1)]
+            </NavLink>
+        </div>
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="User/All">
+                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> @_localizer[nameof(Resource.NavUsers)]
+            </NavLink>
+        </div>
+
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="register">
+                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> @_localizer[nameof(Resource.Register)]
+            </NavLink>
+        </div>
+
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="login">
+                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> @_localizer[nameof(Resource.Login)]
+            </NavLink>
+        </div>
+    </nav>
+
+    <ThemeSelector />
+</div>  *@
