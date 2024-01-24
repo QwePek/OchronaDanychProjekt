@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "EX7kE9Ev/oW5UwYkHvJ5QXZXwNr5bGbJqcocM3psZDvubiw2spbiWoKNCNv7f94BQjE2xSOxSH2BlV65VIPUGw==",
+  "dgSpecHash": "/WUr5TTJxMckeaac85tWrtQ8Giyco11OS7Fyn+UuwfImdauQxAvXsqUxLYLeHNYei0hrwFJfnd7DacXd1bFN4Q==",
   "success": true,
   "projectFilePath": "G:\\Visual Studio Projects\\PAWIMProj\\WebApp\\WebApp\\WebApp.csproj",
   "expectedPackageFiles": [
@@ -71,6 +71,7 @@
     "C:\\Users\\fboch\\.nuget\\packages\\microsoft.jsinterop\\8.0.0\\microsoft.jsinterop.8.0.0.nupkg.sha512",
     "C:\\Users\\fboch\\.nuget\\packages\\microsoft.jsinterop.webassembly\\8.0.0\\microsoft.jsinterop.webassembly.8.0.0.nupkg.sha512",
     "C:\\Users\\fboch\\.nuget\\packages\\microsoft.openapi\\1.2.3\\microsoft.openapi.1.2.3.nupkg.sha512",
+    "C:\\Users\\fboch\\.nuget\\packages\\microsoft.visualstudio.azure.containers.tools.targets\\1.19.5\\microsoft.visualstudio.azure.containers.tools.targets.1.19.5.nupkg.sha512",
     "C:\\Users\\fboch\\.nuget\\packages\\mono.texttemplating\\2.2.1\\mono.texttemplating.2.2.1.nupkg.sha512",
     "C:\\Users\\fboch\\.nuget\\packages\\mysqlconnector\\2.3.1\\mysqlconnector.2.3.1.nupkg.sha512",
     "C:\\Users\\fboch\\.nuget\\packages\\newtonsoft.json\\13.0.3\\newtonsoft.json.13.0.3.nupkg.sha512",

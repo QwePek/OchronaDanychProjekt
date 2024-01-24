@@ -1,0 +1,8 @@
+plaintext
+.git
+.github
+.vs
+WebApp.sln
+README.md
+**/obj/
+**/bin/
