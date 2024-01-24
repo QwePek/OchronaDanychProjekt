@@ -49,4 +49,4 @@ G:\Visual Studio Projects\PAWIMProj\WebApp\WebApp.Shared\bin\Debug\net8.0\WebApp
 G:\Visual Studio Projects\PAWIMProj\WebApp\WebApp.Shared\bin\Debug\net8.0\pl\WebApp.Shared.resources.dll
 G:\Visual Studio Projects\PAWIMProj\WebApp\WebApp.Shared\obj\Debug\net8.0\pl\WebApp.Shared.resources.dll
 G:\Visual Studio Projects\PAWIMProj\WebApp\WebApp.Shared\obj\Debug\net8.0\ref\WebApp.Shared.dll
-G:\Visual Studio Projects\PAWIMProj\WebApp\WebApp.Shared\obj\Debug\net8.0\pl\WebApp.Shared.resources.cs
+G:\Visual Studio Projects\PAWIMProj\WebApp\WebApp.Shared\obj\Debug\net8.0\WebApp.Shared.csproj.AssemblyReference.cache

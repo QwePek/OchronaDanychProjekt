@@ -1,46 +1,84 @@
 ﻿@page "/profile"
-@using System.Security.Claims
-@using Microsoft.AspNetCore.Components.QuickGrid
-@using WebApp.Shared.DTO
-@attribute [Authorize]
+@using Microsoft.IdentityModel.JsonWebTokens
+@using Newtonsoft.Json
+@using System.Net.Http.Headers
+@using System.Text
 @rendermode InteractiveAuto
 @inject NavigationManager Navigation
 @inject HttpClient Http
 @inject ITransactionService msgService
+@inject JWTTokenService tokenData
+@inject AuthenticationStateProvider authenticationProvider
+@inject IJSRuntime JS
 
 <PageTitle>@_localizer[nameof(Resource.TitleProfile)]</PageTitle>
 
+<AuthorizedOnly />
 <ThemeRefresher />
 
-@if(loadedUser == null)
+@if(loadedUser == null && !failed)
 {
 	<h2>@_localizer[nameof(Resource.Loading)]</h2>
 }
+else if(failed)
+{
+	<h2>Failed to load user data!</h2>
+}
 else
 {
+	<button @onclick="()=>changePassword()">Change password</button>
+
 	<div class="profile-container">
 		<div class="profile-info">
 			<p><strong>@_localizer[nameof(Resource.Email)]:</strong> @loadedUser.Email</p>
+			<p><strong>Card number:</strong>
+				@if (cardNumber.Substring(cardNumber.Length - 2) != "==")
+				{
+					<span>@cardNumber</span>
+				}
+				else
+				{
+					<span>***********</span>
+				}
+				<button @onclick="@(() => decryptCardNumber())">Show</button>
+			</p>
+			<p>
+				<strong>Document number:</strong>
+				@if (documentNumber.Substring(documentNumber.Length - 2) != "==")
+				{
+					<span>@documentNumber</span>
+				}
+				else
+				{
+					<span>*********</span>
+				}
+				<button @onclick="@(() => decryptDocumentNumber())">Show</button>
+			</p>
 			<p><strong>@_localizer[nameof(Resource.FirstName)]:</strong> @loadedUser.FirstName</p>
 			<p><strong>@_localizer[nameof(Resource.LastName)]:</strong> @loadedUser.LastName</p>
 			<p><strong>@_localizer[nameof(Resource.BirthDate)]:</strong> @loadedUser.BirthDate</p>
 		</div>
 
 	<button @onclick="()=>AddNewMessage()">Add new message</button>
-	@if (messages == null || loading)
+	@if (transactions == null || (loading && !failedTransactions))
 	{
 		<p><em>@_localizer[nameof(Resource.LoadingMsg)]</em></p>
 	}
-	else if (messages.Count == 0)
+	else if (failedTransactions)
+	{
+		<p><em>Failed to load transactions data!</em></p>
+	}
+	else if (transactions.Count == 0)
 	{
 		<h2>@_localizer[nameof(Resource.NoMessages)]</h2>
 	}
 	else
 	{
 		<div class="grid">
-			<QuickGrid Items="@messages.AsQueryable()">
-				<PropertyColumn Property="@(p => p.Content)" Sortable="true" />
+				<QuickGrid Items="@transactions.AsQueryable()">
+				<PropertyColumn Property="@(p => p.Title)" Sortable="true" />
 				<PropertyColumn Property="@(p => p.Date)" Sortable="true" />
+				<PropertyColumn Property="@(p => p.Value)" Format="c2" Sortable="true" />
 				<TemplateColumn>
 						<button class="btn btn-wlasny" @onclick="@(() => TurnOnEdit(context))">@_localizer[nameof(Resource.MsgEdit)]</button>
 						<button class="btn btn-wlasny" @onclick="@(() => DeleteMessage(context))">@_localizer[nameof(Resource.MsgDelete)]</button>
@@ -51,43 +89,108 @@ else
 	</div>
 }
 
+<script>
+	window.getValueByIdProfile = (elementId, dotNetReference) => {
+		var inputElement = document.getElementById(elementId);
+		var value = inputElement.value;
+		var addition = "0";
+		if (elementId == "first")
+			addition = "1";
+		if (elementId == "second")
+			addition = "2";
+		if (elementId == "third")
+			addition = "3";
+		if (elementId == "fourth")
+			addition = "4";
+		if (elementId == "fifth")
+			addition = "5";
+		if (elementId == "oldPass")
+			addition = "6";
+		if (elementId == "newPass")
+			addition = "7";
+
+		return dotNetReference.invokeMethodAsync('SetInputValue', addition + value);
+	};
+
+	function validate(evt) {
+		var theEvent = evt || window.event;
+
+		if (theEvent.type === 'paste') {
+			key = event.clipboardData.getData('text/plain');
+		} else {
+			var key = theEvent.keyCode || theEvent.which;
+			key = String.fromCharCode(key);
+		}
+		var regex = /[0-9]|\./;
+		if (!regex.test(key)) {
+			theEvent.returnValue = false;
+			if (theEvent.preventDefault)
+				theEvent.preventDefault();
+		}
+	};
+</script>
+
 @code {
-
 	User? loadedUser = null;
-	List<Transaction> messages = new List<Transaction>();
-	bool loading = true;
 
-	[CascadingParameter]
-	private Task<AuthenticationState>? authenticationState { get; set; }
+	List<Transaction> transactions = new List<Transaction>();
+	bool loading = true;
+	bool failed = false;
+	bool failedTransactions = false;
+	string cardNumber = "************";
+	string documentNumber = "*********";
+
+	string[] inputs = new string[7];
+	private DotNetObjectReference<Profile>? objRef;
+
+	protected override async Task OnInitializedAsync()
+	{
+		objRef = DotNetObjectReference.Create(this);
+
+		var authState = await authenticationProvider.GetAuthenticationStateAsync();
+		if (authState == null || !authState.User.Identity.IsAuthenticated)
+			Navigation.NavigateTo("/");
+	}
 
 	protected override async Task OnAfterRenderAsync(bool firstRender)
 	{
 		if (firstRender)
 		{
-			if (authenticationState is not null)
+			var authState = await authenticationProvider.GetAuthenticationStateAsync();
+			var user = authState?.User;
+
+			if (user?.Identity != null && user.Identity.IsAuthenticated)
 			{
-				var authState = await authenticationState;
-				var user = authState?.User;
+				string userID = "";
+				var idClaim = user.Claims.FirstOrDefault(x => x.Type == JwtRegisteredClaimNames.NameId);
+				if (idClaim == null)
+					return;
 
-				if (user?.Identity is not null && user.Identity.IsAuthenticated)
+				userID = idClaim.Value;
+
+				HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, Navigation.BaseUri + "User/Get");
+				request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", tokenData.Token);
+
+				HttpResponseMessage resp = await Http.SendAsync(request);
+				if (resp.IsSuccessStatusCode)
 				{
-					string userID = "";
-					var claims = user.Claims.ToList();
-					foreach(var c in claims)
+					string responseBody = await resp.Content.ReadAsStringAsync();
+
+					Response<User> userResponse = JsonConvert.DeserializeObject<Response<User>>(responseBody);
+					if (userResponse.Success)
 					{
-						if (c.Type == ClaimTypes.NameIdentifier)
-							userID = c.Value;
+						loadedUser = userResponse.Data;
+						cardNumber = loadedUser.CardNumber;
+						documentNumber = loadedUser.DocumentNumber;
 					}
-					if (userID == "")
-						return;
-
-					Response<User>? resp = await Http.GetFromJsonAsync<Response<User>>(Navigation.BaseUri + "User/Get/" + userID);
-					if (resp != null && resp.Success)
-						loadedUser = resp.Data;
-
-					await refreshMessages(userID);
-					StateHasChanged();
+					else
+						failed = true;
 				}
+				else
+					failed = true;
+
+				await refreshTransactions(userID);
+				StateHasChanged();
 			}
 		}
 	}
@@ -114,62 +217,182 @@ else
 
 	public async Task DeleteMessage(Transaction msg)
 	{
-		SweetAlertResult result = await sweetServ.FireAsync(new SweetAlertOptions
-			{
-				Title = "Delete",
-				Text = "Are you sure you want to delete this record?",
-				Icon = SweetAlertIcon.Warning,
-				ShowCancelButton = true,
-				ConfirmButtonText = "Yes",
-				CancelButtonText = "Cancel"
-			});
+		// SweetAlertResult result = await sweetServ.FireAsync(new SweetAlertOptions
+		// 	{
+		// 		Title = "Delete",
+		// 		Text = "Are you sure you want to delete this record?",
+		// 		Icon = SweetAlertIcon.Warning,
+		// 		ShowCancelButton = true,
+		// 		ConfirmButtonText = "Yes",
+		// 		CancelButtonText = "Cancel"
+		// 	});
 
-		if (!string.IsNullOrEmpty(result.Value))
-		{
-			await sweetServ.FireAsync(
-					"Deleted",
-					"Record has been deleted.",
-					SweetAlertIcon.Success
-					);
+		// if (!string.IsNullOrEmpty(result.Value))
+		// {
+		// 	await sweetServ.FireAsync(
+		// 			"Deleted",
+		// 			"Record has been deleted.",
+		// 			SweetAlertIcon.Success
+		// 			);
 
-			await Http.DeleteAsync(Navigation.BaseUri + "Message/Delete/" + msg.Id.ToString());
-			messages.Remove(msg);
-		}
+		// 	await Http.DeleteAsync(Navigation.BaseUri + "Message/Delete/" + msg.Id.ToString());
+		// 	transactions.Remove(msg);
+		// }
 	}
 
 	public async Task AddNewMessage()
 	{
-		SweetAlertResult result = await sweetServ.FireAsync(new SweetAlertOptions
-			{
-				Title = "Edit message",
-				Input = SweetAlertInputType.Text,
-				ShowCancelButton = true,
-				ConfirmButtonText = "Done",
-				CancelButtonText = "Cancel"
-			});
+		// SweetAlertResult result = await sweetServ.FireAsync(new SweetAlertOptions
+		// 	{
+		// 		Title = "Edit message",
+		// 		Input = SweetAlertInputType.Text,
+		// 		ShowCancelButton = true,
+		// 		ConfirmButtonText = "Done",
+		// 		CancelButtonText = "Cancel"
+		// 	});
 
-		if (result.IsConfirmed)
-		{
-			TransactionDTO newMsg = new TransactionDTO();
-			// newMsg.Data = result.Value;
-			// newMsg.UserId = loadedUser.Id;
-			// newMsg.Date = DateTime.Now; 
+		// if (result.IsConfirmed)
+		// {
+		// 	TransactionDTO newMsg = new TransactionDTO();
+		// 	// newMsg.Data = result.Value;
+		// 	// newMsg.UserId = loadedUser.Id;
+		// 	// newMsg.Date = DateTime.Now; 
 
-			//await Http.PostAsJsonAsync<Message>(Navigation.BaseUri + "Message/Add", newMsg);
-			await msgService.AddTransactionAsync(newMsg);
-			await refreshMessages(loadedUser.Id.ToString());
-		}
+		// 	//await Http.PostAsJsonAsync<Message>(Navigation.BaseUri + "Message/Add", newMsg);
+		// 	await msgService.AddTransactionAsync(newMsg);
+		// 	await refreshTransactions(loadedUser.Id.ToString());
+		// }
 	}
 
-	public async Task refreshMessages(string userID)
+	public async Task refreshTransactions(string userID)
 	{
 		loading = true;
-		Response<List<Transaction>>? mess = await Http.GetFromJsonAsync<Response<List<Transaction>>>(Navigation.BaseUri + "Message/GetUserMsg/" + userID);
-		if (mess != null && mess.Success)
-			messages = mess.Data;
+		HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, Navigation.BaseUri + "Transaction/GetUserMsg");
+		request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", tokenData.Token);
+
+		HttpResponseMessage resp = await Http.SendAsync(request);
+		if (resp.IsSuccessStatusCode)
+		{
+			string responseBody = await resp.Content.ReadAsStringAsync();
+
+			Response<List<Transaction>> transactionsResponse = JsonConvert.DeserializeObject<Response<List<Transaction>>>(responseBody);
+			if (transactionsResponse.Success)
+				transactions = transactionsResponse.Data;
+			else
+				failedTransactions = true;
+		}
+		else
+			failedTransactions = true;
 
 		loading = false;
 
 		StateHasChanged();
 	}
+
+	public void decryptCardNumber()
+	{
+		if (cardNumber.Substring(cardNumber.Length - 2) != "==")
+			return;
+		cardNumber = AESUtils.Decrypt(cardNumber);
+
+		StateHasChanged();
+	}
+
+	public void decryptDocumentNumber()
+	{
+		if (documentNumber.Substring(documentNumber.Length - 2) != "==")
+			return;
+		documentNumber = AESUtils.Decrypt(documentNumber);
+
+		StateHasChanged();
+	}
+
+	//Password changing
+	public async Task changePassword()
+	{
+		string[] strings = {
+				"<input class=\"swal2-input\" type=\"password\" id=\"oldPass\" name=\"oldPass\">",
+				"<input class=\"swal2-input\" type=\"password\" id=\"newPass\" name=\"newPass\">",
+				"<input style=\"margin:0;max-width:45px;\" class=\"swal2-input\" type=\"text\" id=\"first\" name=\"first\" maxlength=\"1\" onkeypress=\"validate(event)\">",
+				"<input style=\"margin:0;max-width:45px;\" class=\"swal2-input\" type=\"text\" id=\"second\" name=\"second\" maxlength=\"1\" onkeypress=\"validate(event)\">",
+				"<input style=\"margin:0;max-width:45px;\" class=\"swal2-input\" type=\"text\" id=\"third\" name=\"third\" maxlength=\"1\" onkeypress=\"validate(event)\">",
+				"<input style=\"margin:0;max-width:45px;\" class=\"swal2-input\" type=\"text\" id=\"fourth\" name=\"fourth\" maxlength=\"1\" onkeypress=\"validate(event)\">",
+				"<input style=\"margin:0;max-width:45px;\" class=\"swal2-input\" type=\"text\" id=\"fifth\" name=\"fifth\" maxlength=\"1\" onkeypress=\"validate(event)\">"
+	};
+
+		string HTML = "<div style=\"display:flex;flex-direction:column;justify-content:space-around;margin-top:10px;margin-bottom:10px;\">" + strings[0] + strings[1]
+			+ "<div>" + strings[2] + strings[3] + strings[4] + strings[5] + strings[6] + "</div></div>";
+		SweetAlertResult verificationCode = await sweetServ.FireAsync(new SweetAlertOptions
+			{
+				Title = "Change password",
+				Html = HTML,
+				Icon = SweetAlertIcon.Question,
+				ConfirmButtonText = "OK",
+				PreConfirm = new PreConfirmCallback(getInputValues)
+			});
+
+		PasswordChangeModel changeModel = new PasswordChangeModel();
+		changeModel.NewSecondFactor = inputs[0] + inputs[1] + inputs[2] + inputs[3] + inputs[4];
+		changeModel.OldPassword = inputs[5];
+		changeModel.NewPassword = inputs[6];
+		changeModel.Id = loadedUser.Id;
+
+		var content = new StringContent(JsonConvert.SerializeObject(changeModel), Encoding.UTF8, "application/json");
+		HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, Navigation.BaseUri + "User/PasswordChange");
+		request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", tokenData.Token);
+		request.Content = content;
+		HttpResponseMessage changeResponse = await Http.SendAsync(request);
+		//HttpResponseMessage changeResponse = await Http.PostAsJsonAsync(Navigation.BaseUri + "User/PasswordChange", changeModel);
+		if (changeResponse.IsSuccessStatusCode)
+		{
+			SweetAlertResult result = await sweetServ.FireAsync(new SweetAlertOptions
+				{
+					Title = "Password change",
+					Text = "Successfully changed password",
+					Icon = SweetAlertIcon.Success,
+					ConfirmButtonText = "OK",
+				});
+			Navigation.NavigateTo("/profile");
+		}
+		else
+		{
+			Response changeResponseStr = await changeResponse.Content.ReadFromJsonAsync<Response>();
+			SweetAlertResult validationFail = await sweetServ.FireAsync(new SweetAlertOptions
+				{
+					Title = "Password change fail",
+					Text = changeResponseStr.Message,
+					Icon = SweetAlertIcon.Error,
+					ConfirmButtonText = "OK",
+				});
+		}
+
+		string xd = "";
+	}
+
+	public string getInputValues()
+	{
+		JS.InvokeVoidAsync("getValueByIdProfile", "oldPass", objRef);
+		JS.InvokeVoidAsync("getValueByIdProfile", "newPass", objRef);
+		JS.InvokeVoidAsync("getValueByIdProfile", "first", objRef);
+		JS.InvokeVoidAsync("getValueByIdProfile", "second", objRef);
+		JS.InvokeVoidAsync("getValueByIdProfile", "third", objRef);
+		JS.InvokeVoidAsync("getValueByIdProfile", "fourth", objRef);
+		JS.InvokeVoidAsync("getValueByIdProfile", "fifth", objRef);
+		return "";
+	}
+
+	[JSInvokable]
+	public void SetInputValue(string value)
+	{
+		uint inputIdx = uint.Parse(value.Substring(0, 1)) - 1;
+		if (value.Length == 1)
+		{
+			inputs[inputIdx] = "-1";
+			return;
+		}
+		string val = value.Substring(1);
+			inputs[inputIdx] = val;
+	}
+
+	public void Dispose() => objRef?.Dispose();
 }

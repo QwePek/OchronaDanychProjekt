@@ -7,6 +7,11 @@
             <LanguageSelector />
         </div>
         <nav class="navigation-bar">
+            <div class="navItem">
+                <NavLink ActiveClass="active" href="claims">
+                    <span aria-hidden="true"></span>"Test"
+                </NavLink>
+            </div>
             <AuthorizeView>
                 <Authorized>
 @*                 <div class="navItem">
@@ -15,17 +20,12 @@
                     </NavLink>
                 </div> *@
                 <div class="navItem">
-                    <NavLink ActiveClass="active" href="microphone">
-                        <span aria-hidden="true"></span> @_localizer[nameof(Resource.Microphone)]
-                    </NavLink>
-                </div>
-                <div class="navItem">
                     <NavLink ActiveClass="active" href="profile">
                             <span aria-hidden="true"></span>@_localizer[nameof(Resource.Profile)]
                     </NavLink>
                 </div>
                 <div class="navItem">
-                    <form action="/Login/SignOut" method="post">
+                    <form action="/Auth/Logout" method="post">
                         <input class="logout-link" type="submit" value="@_localizer[nameof(Resource.Logout)]">
                     </form>
                 </div>

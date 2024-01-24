@@ -4,6 +4,9 @@ using WebApp.Shared.Model;
 using WebApp.Shared;
 using WebApp.Shared.Services;
 using WebApp.Shared.DTO;
+using System.Security.Claims;
+using WebApp.Authentication;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace WebApp.Controllers
 {
@@ -74,7 +77,7 @@ namespace WebApp.Controllers
         }
 
         [HttpGet("GetUserMsg/{ID}")]
-        public async Task<ActionResult<Response<Transaction>>> GetUserMsg(int ID)
+        public async Task<ActionResult<Response<List<Transaction>>>> GetUserMsg(int ID)
         {
             var result = await _transactionService.GetUserTransactionsAsync(ID);
 
@@ -83,5 +86,24 @@ namespace WebApp.Controllers
             else
                 return StatusCode(500, $"Internal server error {result.Message}");
         }
-    }
+
+		[HttpGet("GetUserMsg")]
+		public async Task<ActionResult<Response<List<Transaction>>>> GetUserMsg()
+		{
+			string authorizationHeader = Request.Headers["Authorization"];
+			List<Claim> claims = ApiAuthenticationStateProvider.ParseClaimsFromJwt(authorizationHeader).ToList();
+
+			var userId = claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.NameId);
+			if (userId == null)
+				return Unauthorized(new { message = "Unauthorized user" });
+
+			int ID = int.Parse(userId.Value);
+			var result = await _transactionService.GetUserTransactionsAsync(ID);
+
+			if (result.Success)
+				return Ok(result);
+			else
+				return StatusCode(500, $"Internal server error {result.Message}");
+		}
+	}
 }

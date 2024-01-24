@@ -1,6 +1,8 @@
 ﻿ using WebApp.DataSeeder;
 using Microsoft.EntityFrameworkCore;
 using WebApp.Shared.Model;
+using Microsoft.AspNetCore.Identity;
+using WebApp.Shared;
 
 namespace WebApp.Data
 {
@@ -37,6 +39,12 @@ namespace WebApp.Data
 
 				entity.Property(u => u.PasswordHash).IsRequired();
 				entity.Property(u => u.PasswordSalt).IsRequired();
+
+				entity.Property(u => u.SecondFactorEncrypted).IsRequired();
+				entity.Property(u => u.LoginAttempts).IsRequired();
+
+				entity.Property(u => u.CardNumber).IsRequired();
+				entity.Property(u => u.DocumentNumber).IsRequired();
 			});
 
 			// Fluent API dla klasy Message
@@ -61,27 +69,43 @@ namespace WebApp.Data
 
 			List<User> generatedUsers = UserSeeder.GenerateData(10);
 
-			//List<User> users = new List<User>
-			//{
-			//	new User{Id=11, FirstName= "John",LastName= "Doe",Email=  "email@email.com", PasswordHash="Haslo1!",BirthDate= new DateOnly(1990, 5, 15) },
-			//	new User{Id=12,FirstName="Jane",LastName=  "Smith",Email= "jane.smith@email.com",Password= "secret456",BirthDate= new DateOnly(1985, 9, 22) },
-			//	new User{Id=13,FirstName="Bob", LastName= "Johnson", Email="bob.johnson@email.com", Password="secure789", BirthDate=new DateOnly(2000, 3, 8) },
-			//	new User{Id=14,FirstName="Alice",LastName=  "Williams",Email= "alice.williams@email.com", Password="pass1234", BirthDate=new DateOnly(1993, 12, 5) },
-			//	new User{Id=15,FirstName="Charlie",LastName=  "Brown",Email= "charlie.brown@email.com",Password= "brownie456", BirthDate=new DateOnly(1988, 7, 17) },
-			//	new User{Id=16,FirstName="Eva", LastName= "Martinez", Email="eva.martinez@email.com", Password="eva123", BirthDate=new DateOnly(1995, 2, 10) },
-			//	new User{Id=17,FirstName="David", LastName= "Lee", Email="david.lee@email.com",Password= "lee456",BirthDate= new DateOnly(1992, 6, 30) },
-			//	new User{Id=18,FirstName="Sophie", LastName= "Turner",Email= "sophie.turner@email.com", Password="sophie789", BirthDate=new DateOnly(1989, 11, 25) },
-			//	new User{Id=19,FirstName="Michael",LastName=  "Wang",Email= "michael.wang@email.com",Password= "wang123",BirthDate= new DateOnly(1997, 8, 12) }
-			//};
+            PasswordHasher<User> hasher = new PasswordHasher<User>();
+			string saltForAdmin = generateSalt(1);
 
-            //generatedUsers.AddRange(users);
-            List<Transaction> generateTransactions = TransactionSeeder.GenerateData(200, generatedUsers);
+			//WARNING
+			AESUtils.KEY = "0123456789abcdef";
+			AESUtils.IV = "abcdef0123456789";
 
+			List<User> users = new List<User>
+			{
+				new User{ Id = 11, FirstName= "Admin", LastName= "AdminLast", Email =  "admin@admin.pl",
+					PasswordHash = hasher.HashPassword(null, "Qwer1234!" + saltForAdmin),
+					PasswordSalt=saltForAdmin, BirthDate= new DateOnly(2020, 3, 12), Role=Role.Admin,
+					SecondFactorEncrypted = AESUtils.Encrypt("12345"), CardNumber = AESUtils.Encrypt("123456789876"),
+					DocumentNumber = AESUtils.Encrypt("123456789") },
+
+				new User{ Id = 12, FirstName= "Filip", LastName= "Bochra", Email =  "filip@eweb.pl", 
+					PasswordHash = hasher.HashPassword(null, "Qwer1234!" + saltForAdmin), 
+					PasswordSalt = saltForAdmin, BirthDate = new DateOnly(1990, 5, 15), Role=Role.User, 
+					SecondFactorEncrypted = AESUtils.Encrypt("54321"), CardNumber=AESUtils.Encrypt("676331231234"),
+                    DocumentNumber = AESUtils.Encrypt("987654321") }
+			};
+
+			generatedUsers.AddRange(users);
+			List<Transaction> generateTransactions = TransactionSeeder.GenerateData(200, generatedUsers);
 
             modelBuilder.Entity<User>().HasData(generatedUsers);
 			modelBuilder.Entity<Transaction>().HasData(generateTransactions);
 		}
-	}
+
+		//DEBUG
+        public static string generateSalt(int length)
+        {
+            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+            return new string(Enumerable.Repeat(chars, length)
+                .Select(s => s[Random.Shared.Next(s.Length)]).ToArray());
+        }
+    }
 }
 
 // instalacja dotnet ef 

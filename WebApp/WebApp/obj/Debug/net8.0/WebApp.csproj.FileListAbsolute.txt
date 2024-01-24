@@ -422,7 +422,6 @@ G:\Visual Studio Projects\PAWIMProj\WebApp\WebApp\obj\Debug\net8.0\scopedcss\Com
 G:\Visual Studio Projects\PAWIMProj\WebApp\WebApp\obj\Debug\net8.0\scopedcss\Components\Layout\MainLayout.razor.rz.scp.css
 G:\Visual Studio Projects\PAWIMProj\WebApp\WebApp\obj\Debug\net8.0\scopedcss\Components\Layout\NavMenu.razor.rz.scp.css
 G:\Visual Studio Projects\PAWIMProj\WebApp\WebApp\obj\Debug\net8.0\scopedcss\Components\Layout\ThemeSelector.razor.rz.scp.css
-G:\Visual Studio Projects\PAWIMProj\WebApp\WebApp\obj\Debug\net8.0\scopedcss\Components\Pages\Microphone.razor.rz.scp.css
 G:\Visual Studio Projects\PAWIMProj\WebApp\WebApp\obj\Debug\net8.0\scopedcss\Components\Pages\Profile.razor.rz.scp.css
 G:\Visual Studio Projects\PAWIMProj\WebApp\WebApp\obj\Debug\net8.0\scopedcss\Components\Pages\Login.razor.rz.scp.css
 G:\Visual Studio Projects\PAWIMProj\WebApp\WebApp\obj\Debug\net8.0\scopedcss\Components\Pages\Register.razor.rz.scp.css
@@ -436,3 +435,17 @@ G:\Visual Studio Projects\PAWIMProj\WebApp\WebApp\bin\Debug\net8.0\Microsoft.Asp
 G:\Visual Studio Projects\PAWIMProj\WebApp\WebApp\bin\Debug\net8.0\Microsoft.AspNetCore.Cryptography.KeyDerivation.dll
 G:\Visual Studio Projects\PAWIMProj\WebApp\WebApp\bin\Debug\net8.0\Microsoft.Extensions.Identity.Core.dll
 G:\Visual Studio Projects\PAWIMProj\WebApp\WebApp\bin\Debug\net8.0\Microsoft.Extensions.Options.dll
+G:\Visual Studio Projects\PAWIMProj\WebApp\WebApp\bin\Debug\net8.0\Microsoft.AspNetCore.Authentication.OpenIdConnect.dll
+G:\Visual Studio Projects\PAWIMProj\WebApp\WebApp\bin\Debug\net8.0\Microsoft.IdentityModel.Abstractions.dll
+G:\Visual Studio Projects\PAWIMProj\WebApp\WebApp\bin\Debug\net8.0\Microsoft.IdentityModel.JsonWebTokens.dll
+G:\Visual Studio Projects\PAWIMProj\WebApp\WebApp\bin\Debug\net8.0\Microsoft.IdentityModel.Logging.dll
+G:\Visual Studio Projects\PAWIMProj\WebApp\WebApp\bin\Debug\net8.0\Microsoft.IdentityModel.Protocols.dll
+G:\Visual Studio Projects\PAWIMProj\WebApp\WebApp\bin\Debug\net8.0\Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
+G:\Visual Studio Projects\PAWIMProj\WebApp\WebApp\bin\Debug\net8.0\Microsoft.IdentityModel.Tokens.dll
+G:\Visual Studio Projects\PAWIMProj\WebApp\WebApp\bin\Debug\net8.0\System.IdentityModel.Tokens.Jwt.dll
+G:\Visual Studio Projects\PAWIMProj\WebApp\WebApp\bin\Debug\net8.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
+G:\Visual Studio Projects\PAWIMProj\WebApp\WebApp\bin\Debug\net8.0\Newtonsoft.Json.dll
+G:\Visual Studio Projects\PAWIMProj\WebApp\WebApp\bin\Debug\net8.0\EntityFramework.SqlServer.dll
+G:\Visual Studio Projects\PAWIMProj\WebApp\WebApp\bin\Debug\net8.0\EntityFramework.dll
+G:\Visual Studio Projects\PAWIMProj\WebApp\WebApp\bin\Debug\net8.0\Microsoft.AspNet.Identity.Core.dll
+G:\Visual Studio Projects\PAWIMProj\WebApp\WebApp\bin\Debug\net8.0\Microsoft.AspNet.Identity.EntityFramework.dll

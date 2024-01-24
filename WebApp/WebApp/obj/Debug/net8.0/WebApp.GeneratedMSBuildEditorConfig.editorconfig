@@ -22,16 +22,16 @@ build_property._RazorSourceGeneratorDebug =
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xBcHAucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
+[G:/Visual Studio Projects/PAWIMProj/WebApp/WebApp/Components/Pages/Claims.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xDbGFpbXMucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
 [G:/Visual Studio Projects/PAWIMProj/WebApp/WebApp/Components/Pages/Error.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xFcnJvci5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
 [G:/Visual Studio Projects/PAWIMProj/WebApp/WebApp/Components/Pages/Home.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xIb21lLnJhem9y
-build_metadata.AdditionalFiles.CssScope = 
-
-[G:/Visual Studio Projects/PAWIMProj/WebApp/WebApp/Components/Pages/Test.razor]
-build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xUZXN0LnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
 [G:/Visual Studio Projects/PAWIMProj/WebApp/WebApp/Components/Pages/ThemeRefresher.razor]
@@ -44,10 +44,6 @@ build_metadata.AdditionalFiles.CssScope =
 
 [G:/Visual Studio Projects/PAWIMProj/WebApp/WebApp/Components/Pages/UserEdit.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xVc2VyRWRpdC5yYXpvcg==
-build_metadata.AdditionalFiles.CssScope = 
-
-[G:/Visual Studio Projects/PAWIMProj/WebApp/WebApp/Components/Pages/Weather.razor]
-build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xXZWF0aGVyLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
 [G:/Visual Studio Projects/PAWIMProj/WebApp/WebApp/Components/Routes.razor]
@@ -77,10 +73,6 @@ build_metadata.AdditionalFiles.CssScope = b-44k1g8p6lp
 [G:/Visual Studio Projects/PAWIMProj/WebApp/WebApp/Components/Pages/Login.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xMb2dpbi5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = b-iq1362wwd4
-
-[G:/Visual Studio Projects/PAWIMProj/WebApp/WebApp/Components/Pages/Microphone.razor]
-build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xNaWNyb3Bob25lLnJhem9y
-build_metadata.AdditionalFiles.CssScope = b-0m4gqlk7ku
 
 [G:/Visual Studio Projects/PAWIMProj/WebApp/WebApp/Components/Pages/Profile.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xQcm9maWxlLnJhem9y

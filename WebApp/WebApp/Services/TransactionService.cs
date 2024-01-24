@@ -202,7 +202,7 @@ namespace WebApp.Services
             allUserTransactions.AddRange(sameIDTransactionSender);
             allUserTransactions.AddRange(sameIDTransactionReciever);
 
-			if (allUserTransactions == null || allUserTransactions.Count == 0)
+			if (allUserTransactions == null)
             {
                 return new Response<List<Transaction>>()
                 {

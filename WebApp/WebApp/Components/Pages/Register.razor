@@ -1,9 +1,10 @@
 ﻿@page "/register"
+@attribute [AllowAnonymous]
 @rendermode InteractiveAuto
 
-@using System.ComponentModel.DataAnnotations
 @inject NavigationManager Navigation
 @inject HttpClient Http
+@inject AuthenticationStateProvider authenticationProvider
 
 <PageTitle>@_localizer[nameof(Resource.TitleRegister)]</PageTitle>
 
@@ -12,72 +13,109 @@
 <div style="display:flex;justify-content:center;">
     <div id="form-container">
         <h1>@_localizer[nameof(Resource.Register)]</h1>
-        <EditForm Model="@registerModel" OnValidSubmit="@Submit"  FormName="Register">
+        <EditForm OnSubmit="@Submit" method="post" Model="@registerModel" FormName="registerForm">
             <div class="validation-right">
                 <DataAnnotationsValidator />
                 <ValidationSummary />
             </div>
             <div class="input-container">
                 <label for="username">@_localizer[nameof(Resource.Email)]</label>
-                <InputText @bind-Value="registerModel.Email" type="email"/>
+                <InputText @bind-Value="registerModel.Email" type="email" name="email" />
             </div>
             <div style="display:flex;flex-direction:row;justify-content:center">
                 <div class="input-container">
                     <label for="username">@_localizer[nameof(Resource.FirstName)]</label>
-                    <InputText @bind-Value="registerModel.FirstName"/>
+                    <InputText @bind-Value="registerModel.FirstName" name="firstName" />
                 </div>
                 <span style="padding:1px"></span>
                 <div class="input-container">
                     <label for="username">@_localizer[nameof(Resource.LastName)]</label>
-                    <InputText @bind-Value="registerModel.LastName"/>
+                    <InputText @bind-Value="registerModel.LastName" name="lastName" />
                 </div>
             </div>
                 <div class="input-container">
                     <label for="username">@_localizer[nameof(Resource.BirthDate)]</label>
-                    <InputDate Type="InputDateType.Date" @bind-Value="registerModel.BirthDate"/>
+                <InputDate Type="InputDateType.Date" @bind-Value="registerModel.BirthDate" name="birthDate" />
                 </div>
             <div class="input-container">
                 <label for="password">@_localizer[nameof(Resource.Password)]</label>
-                <InputText @bind-Value="registerModel.Password" type="password" />
+                <InputText @bind-Value="registerModel.Password" type="password" name="password" />
             </div>
             <button type="submit" class="btn btn-success btn-block" disabled="@disableButton">@_localizer[nameof(Resource.Register)]</button>
         </EditForm>
     </div>
 </div>
 
-
-@*TODO: ZROBIC REJESTRACJE- DODAC MIGRACJE Z PASSWORD DO BAZY DANYCH, POTEM ZROBIC LOGOWANIE I ABY
-    PO ZALOGOWANIU SIE POKAZYWALO SIE OKNO ALL MESSAGES I TAM SIE WYSWIETLALY WSZYSTKIE WIADOMOSCI UZYTKOWNIKA
-
-    DODAC TEZ JAKIES OKNO SWOJEGO PROFILU I MOZLIWOSC USUNIECIA GO
-
-    POPRAWIENIE CSS CALEJ TEJ ROZJEBANEJ STRONY :)
-*@
-
 @code {
     [SupplyParameterFromForm]
     public RegisterModel? registerModel { set; get; }
-    bool canRender = false;
     string? disableButton = null;
 
     protected override void OnInitialized()
     {
         registerModel ??= new();
-        registerModel.BirthDate = DateOnly.FromDateTime(DateTime.Now);
+        base.OnInitialized();
     }
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
+    protected override async Task OnInitializedAsync()
     {
-        if (firstRender)
-            canRender = true;
+        var authState = await authenticationProvider.GetAuthenticationStateAsync();
+        if (authState != null && authState.User.Identity.IsAuthenticated)
+            Navigation.NavigateTo("/");
     }
 
     public async Task Submit()
     {
         disableButton = "disabled";
-        //Tutaj możesz dodać logikę wysyłki formularza, na przykład używając HttpClient
-        var resp = await Http.PostAsJsonAsync<RegisterModel>(Navigation.BaseUri + "Login/Register", registerModel);
-        if(resp != null && resp.StatusCode == System.Net.HttpStatusCode.InternalServerError)
+
+        // var company = JsonSerializer.Serialize(registerModel);
+        // var request = new HttpRequestMessage(HttpMethod.Post, Navigation.BaseUri + "Login/Login");
+        // request.Headers.Add("Authorization", $"Bearer {token}");
+        // request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+        // request.Content = new StringContent(company, Encoding.UTF8);
+        // request.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+
+        // // var resp = await Http.SendAsync(request);
+        // HttpClient tRequest = new HttpClient();
+        // tRequest.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(formFieldName, requestToken);
+        // var resp = await tRequest.PostAsJsonAsync(Navigation.BaseUri + "Login/Register", registerModel);
+
+        //Http.DefaultRequestHeaders.Add("Authorization", $"Bearer {token}");
+        //var resp = await Http.PostAsJsonAsync(Navigation.BaseUri + "Login/Register", registerModel);
+        //string formFieldName = Antiforgery.GetAndStoreTokens(httpContextAccessor.HttpContext).FormFieldName;
+        //string requestToken = Antiforgery.GetAndStoreTokens(httpContextAccessor.HttpContext).RequestToken;
+
+
+        // //var _client = ClientFactory.CreateClient();
+        // string strPayload = JsonConvert.SerializeObject(registerModel);
+        // HttpContent c = new StringContent(strPayload, Encoding.UTF8, "application/json");
+
+        // // content.Headers.ContentType = new MediaTypeHeaderValue("application/x-www-form-urlencoded");
+        //var antiforgery = Antiforgery.GetAndStoreTokens(httpContextAccessor.HttpContext);
+        // var request = new HttpRequestMessage(HttpMethod.Post, Navigation.BaseUri + "Login/Register");
+        // request.Content = c;
+
+        // request.Headers.Add(antiforgery.FormFieldName, antiforgery.RequestToken);
+        // var resp = await Http.SendAsync(request);
+        //HttpResponseMessage resp = await _client.PostAsync(Navigation.BaseUri + "Login/Register", content);
+        // Dictionary<string, string> postData = new Dictionary<string, string>
+        // {
+        //     {"email", registerModel.Email },
+        //     {"firstName", registerModel.FirstName },
+        //     {"lastName", registerModel.LastName },
+        //     {"birthDate", registerModel.BirthDate.ToString() },
+        //     {"password", registerModel.Password },
+        //     {antiforgery.FormFieldName, antiforgery.RequestToken },
+        // };
+
+        // var request = new HttpRequestMessage(HttpMethod.Post, Navigation.BaseUri + "Login/Register");
+        // request.Headers.Add("Cookie", ".AspNetCore.Antiforgery.xWi4IkIEaAE=CfDJ8HAZEHB5CllBo3M7k8uh5YU-mWhC9s1qS8ZtkrZBBo8D07VAE68h-icgNs2p22y8Zf29flv1OqKg3x2Obl944HEkjiTVPHmL56NBmtmBIrAB7hgnsrYeNA9t4v-x26nyPhePNHxC8tbRVc3K9G2_9UM");
+        // //request.Headers.Add("Cookie", ".AspNetCore.Antiforgery.xWi4IkIEaAE=" + antiforgery.RequestToken);
+        // var content = new FormUrlEncodedContent(postData);
+        // request.Content = content;
+        // var resp = await Http.SendAsync(request);
+        HttpResponseMessage response = await Http.PostAsJsonAsync(Navigation.BaseUri + "Auth/Register", registerModel);
+        if (response.StatusCode == System.Net.HttpStatusCode.InternalServerError)
         {
             SweetAlertResult result = await sweetServ.FireAsync(new SweetAlertOptions
                 {
@@ -86,8 +124,9 @@
                     Icon = SweetAlertIcon.Error,
                     ConfirmButtonText = "OK",
                 });
+
         }
-        else if(resp == null || resp.StatusCode == System.Net.HttpStatusCode.OK)
+        else if (response.StatusCode == System.Net.HttpStatusCode.OK)
         {
             SweetAlertResult result = await sweetServ.FireAsync(new SweetAlertOptions
                 {
@@ -96,7 +135,18 @@
                     Icon = SweetAlertIcon.Success,
                     ConfirmButtonText = "OK",
                 });
+            Navigation.NavigateTo("/");
         }
-        disableButton = null;
+        else
+        {
+            SweetAlertResult result = await sweetServ.FireAsync(new SweetAlertOptions
+                {
+                    Title = "Error " + response.StatusCode,
+                    Text = await response.Content.ReadAsStringAsync(),
+                    Icon = SweetAlertIcon.Error,
+                    ConfirmButtonText = "OK",
+                });
+        }
+        disableButton = null;        
     }
 }

@@ -1,21 +1,36 @@
 ﻿@page "/login"
+@using Blazored.LocalStorage
+@using System.Text.Json
+@attribute [AllowAnonymous]
 @rendermode InteractiveAuto
 
-@using System.Text.Json
-@using Microsoft.AspNetCore.Components.Authorization
-@using System.Security.Claims
+@implements IDisposable
+
 @inject NavigationManager Navigation
 @inject HttpClient Http
-@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject ILocalStorageService LocalStorage
+@inject AuthenticationStateProvider authenticationProvider
+@inject IJSRuntime JS
 
 <PageTitle>@_localizer[nameof(Resource.TitleLogin)]</PageTitle>
-
 <ThemeRefresher />
 
 <div style="display:flex;justify-content:center;">
     <div id="form-container">
         <h1>@_localizer[nameof(Resource.Login)]</h1>
-        <form action="/Login/Login" method="post">
+        <EditForm OnSubmit="@Submit" method="post" Model="@loginModel" FormName="loginForm">
+            <div class="input-container">
+                <label for="email">@_localizer[nameof(Resource.Email)]</label>
+                <InputText @bind-Value="loginModel.Email" type="email" name="email" />
+            </div>
+            <div class="input-container">
+                <label for="password">@_localizer[nameof(Resource.Password)]</label>
+                <InputText @bind-Value="loginModel.Password" type="password" name="password" />
+            </div>
+            <input type="submit" class="btn btn-success btn-block" value="@_localizer[nameof(Resource.Login)]">
+        </EditForm>
+@*         <form action="/Login/Authenticate" method="post">
+            <AntiforgeryToken />
             <div class="input-container">
                 <label for="email">@_localizer[nameof(Resource.Email)]</label>
                 <input type="email" name="email">
@@ -24,67 +39,177 @@
                 <label for="password">@_localizer[nameof(Resource.Password)]</label>
                 <input name="password" type="password" />
             </div>
-            <AntiforgeryToken />
             <input type="submit" class="btn btn-success btn-block" value="@_localizer[nameof(Resource.Login)]">
-        </form>
+        </form> *@
     </div>
 </div>
 
-@*TODO: ZROBIC REJESTRACJE- DODAC MIGRACJE Z PASSWORD DO BAZY DANYCH, POTEM ZROBIC LOGOWANIE I ABY
-    PO ZALOGOWANIU SIE POKAZYWALO SIE OKNO ALL MESSAGES I TAM SIE WYSWIETLALY WSZYSTKIE WIADOMOSCI UZYTKOWNIKA
+<script>
+    window.getValueById = (elementId, dotNetReference) => {
+        var inputElement = document.getElementById(elementId);
+        var value = inputElement.value;
+        var addition = "0";
+        if (elementId == "first")
+            addition = "1";
+        if (elementId == "second")
+            addition = "2";
+        if (elementId == "third")
+            addition = "3";
+        if (elementId == "fourth")
+            addition = "4";
+        if (elementId == "fifth")
+            addition = "5";
 
-    DODAC TEZ JAKIES OKNO SWOJEGO PROFILU I MOZLIWOSC USUNIECIA GO
+        return dotNetReference.invokeMethodAsync('SetInputValue', addition + value);
+    };
 
-    POPRAWIENIE CSS CALEJ TEJ ROZJEBANEJ STRONY :)
-*@
+    function validate(evt) {
+        var theEvent = evt || window.event;
+
+        if (theEvent.type === 'paste') {
+            key = event.clipboardData.getData('text/plain');
+        } else {
+            var key = theEvent.keyCode || theEvent.which;
+            key = String.fromCharCode(key);
+        }
+        var regex = /[0-9]|\./;
+        if( !regex.test(key) ) {
+            theEvent.returnValue = false;
+        if(theEvent.preventDefault)
+            theEvent.preventDefault();
+        }
+    };
+</script>
+
 @code {
     [SupplyParameterFromForm]
     public LoginModel? loginModel { set; get; }
 
-    [CascadingParameter]
-    private Task<AuthenticationState>? authenticationState { get; set; }
+    string[] inputs = new string[5];
+    private DotNetObjectReference<Login>? objRef;
+    int random1, random2;
 
-    protected override void OnInitialized() => loginModel ??= new();
-
-    protected override async Task OnAfterRenderAsync(bool firstRender)
+    protected override void OnInitialized()
     {
-        if (firstRender)
-        {
-            var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-            var user = authState.User;
+        loginModel ??= new();
+        objRef = DotNetObjectReference.Create(this);
+        base.OnInitialized();
+    }
 
-            StateHasChanged();
-        }
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await authenticationProvider.GetAuthenticationStateAsync();
+        if (authState != null && authState.User.Identity.IsAuthenticated)
+            Navigation.NavigateTo("/");
     }
 
     public async Task Submit()
     {
         //Tutaj możesz dodać logikę wysyłki formularza, na przykład używając HttpClient
-        HttpResponseMessage response = await Http.PostAsJsonAsync(Navigation.BaseUri + "Login/Login", loginModel);
-
         //ServiceResponse<User> resp = await Http.GetFromJsonAsync<ServiceResponse<User>>(Navigation.BaseUri + "Login/Login", loginModel, jsonSerializerOptions);
+        loginModel.SecondFactorPassword = "";
+        HttpResponseMessage response = await Http.PostAsJsonAsync(Navigation.BaseUri + "Auth/Login", loginModel);
         if (response.IsSuccessStatusCode)
         {
-            SweetAlertResult result = await sweetServ.FireAsync(new SweetAlertOptions
-                {
-                    Title = "Logged in",
-                    Text = "Successfully Logged in",
-                    Icon = SweetAlertIcon.Success,
-                    ConfirmButtonText = "OK",
-                });
+            Random r = new Random();
+            random1 = r.Next(0, 5);
+            do {
+                random2 = r.Next(0, 5);
+            }
+            while (random1 == random2);
 
+            string[] strings = {
+                "<input style=\"margin:0;max-width:45px;\" class=\"swal2-input\" type=\"text\" id=\"first\" name=\"first\" maxlength=\"1\" onkeypress=\"validate(event)\">",
+                "<input style=\"margin:0;max-width:45px;\" class=\"swal2-input\" type=\"text\" id=\"second\" name=\"second\" maxlength=\"1\" onkeypress=\"validate(event)\">",
+                "<input style=\"margin:0;max-width:45px;\" class=\"swal2-input\" type=\"text\" id=\"third\" name=\"third\" maxlength=\"1\" onkeypress=\"validate(event)\">",
+                "<input style=\"margin:0;max-width:45px;\" class=\"swal2-input\" type=\"text\" id=\"fourth\" name=\"fourth\" maxlength=\"1\" onkeypress=\"validate(event)\">",
+                "<input style=\"margin:0;max-width:45px;\" class=\"swal2-input\" type=\"text\" id=\"fifth\" name=\"fifth\" maxlength=\"1\" onkeypress=\"validate(event)\">"
+    };
 
+            strings[random1] = "<div class=\"swal2-title\" style=\"margin:0;padding:0;display:flex;align-items:center\"><span>*</span></div>";
+            strings[random2] = strings[random1];
+            inputs[random1] = "*";
+            inputs[random2] = "*";
+
+            string HTML = "<div style=\"display:flex;justify-content:space-around;margin-top:10px;margin-bottom:10px;\">" + strings[0] + strings[1] + strings[2] + strings[3] + strings[4] + "</div>";
+            SweetAlertResult verificationCode = await sweetServ.FireAsync(new SweetAlertOptions {
+                Title = "Verification code in",
+                Html = HTML,
+                Text = "Sracziczi",
+                Icon = SweetAlertIcon.Question,
+                ConfirmButtonText = "OK",
+                AllowOutsideClick = false,
+                AllowEscapeKey = false,
+                PreConfirm = new PreConfirmCallback(getInputValues)
+            });
+
+            loginModel.SecondFactorPassword = inputs[0] + inputs[1] + inputs[2] + inputs[3] + inputs[4];
+            HttpResponseMessage validationResponse = await Http.PostAsJsonAsync(Navigation.BaseUri + "Auth/Login", loginModel);
+            if (validationResponse.IsSuccessStatusCode)
+            {
+                SweetAlertResult result = await sweetServ.FireAsync(new SweetAlertOptions
+                    {
+                        Title = "Logged in",
+                        Text = "Successfully Logged in",
+                        Icon = SweetAlertIcon.Success,
+                        ConfirmButtonText = "OK",
+                    });
+
+                Navigation.NavigateTo("/");
+            }
+            else
+            {
+                var validationResponseStr = await validationResponse.Content.ReadAsStringAsync();
+                SweetAlertResult validationFail = await sweetServ.FireAsync(new SweetAlertOptions
+                    {
+                        Title = "Validation fail",
+                        Text = validationResponseStr,
+                        Icon = SweetAlertIcon.Error,
+                        ConfirmButtonText = "OK",
+                    });
+            }
             //Navigation.NavigateTo(Navigation.BaseUri + "Test");
         }
         else
         {
-            SweetAlertResult result = await sweetServ.FireAsync(new SweetAlertOptions
-                {
+            var loginResp = await response.Content.ReadAsStringAsync();
+
+            SweetAlertResult result = await sweetServ.FireAsync(new SweetAlertOptions {
                     Title = "Failed",
-                    Text = "Failed to login",
+                    Text = loginResp,
                     Icon = SweetAlertIcon.Error,
                     ConfirmButtonText = "OK",
                 });
         }
     }
+
+    public string getInputValues()
+    {
+        if (random1 != 0 && random2 != 0)
+            JS.InvokeVoidAsync("getValueById", "first", objRef);
+        if (random1 != 1 && random2 != 1)
+            JS.InvokeVoidAsync("getValueById", "second", objRef);
+        if (random1 != 2 && random2 != 2)
+            JS.InvokeVoidAsync("getValueById", "third", objRef);
+        if (random1 != 3 && random2 != 3)
+            JS.InvokeVoidAsync("getValueById", "fourth", objRef);
+        if (random1 != 4 && random2 != 4)
+            JS.InvokeVoidAsync("getValueById", "fifth", objRef);
+        return "";
+    }
+
+    [JSInvokable]
+    public void SetInputValue(string value)
+    {
+        uint inputIdx = uint.Parse(value.Substring(0, 1)) - 1;
+        if(value.Length == 1)
+        {
+            inputs[inputIdx] = "-1";
+            return;
+        }
+        string val = value.Substring(1);
+        inputs[inputIdx] = val;
+    }
+    
+    public void Dispose() => objRef?.Dispose();
 }

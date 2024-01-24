@@ -5,14 +5,16 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace WebApp.Shared.Login
+namespace WebApp.Shared.DTO
 {
     public class LoginModel
     {
-        [Required(ErrorMessage = "Email is required.")]
+        [Required(ErrorMessage = "Email is required")]
         public string Email { get; set; }
 
-        [Required(ErrorMessage = "Password is required.")]
+        [Required(ErrorMessage = "Password is required")]
         public string Password { get; set; }
+
+        public string SecondFactorPassword { get; set; } = "";
     }
 }

@@ -14,9 +14,14 @@
 @inject IStringLocalizer<Resource> _localizer
 @using CurrieTechnologies.Razor.SweetAlert2
 @inject SweetAlertService sweetServ;
-@using WebApp.Shared.Login
 @using WebApp.Shared.Services
 @using WebApp.Shared
 @using WebApp.Shared.Model
 @using Microsoft.AspNetCore.Components.Authorization;
 @using Microsoft.AspNetCore.Authorization
+@using System.Security.Claims
+@using Microsoft.AspNetCore.Antiforgery
+@using Microsoft.AspNetCore.Components.QuickGrid
+@using WebApp.Shared.DTO
+@using WebApp.Services
+@using WebApp.Components.Layout;

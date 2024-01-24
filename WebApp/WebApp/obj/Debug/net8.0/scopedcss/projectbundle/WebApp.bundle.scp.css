@@ -317,12 +317,6 @@ input[type=submit][b-iq1362wwd4] {
     input[type=submit]:hover[b-iq1362wwd4] {
         background-color: var(--palette-5);
     }
-/* _content/WebApp/Components/Pages/Microphone.razor.rz.scp.css */
-#visualizer[b-0m4gqlk7ku] {
-	width: 100%;
-	height: 200px;
-	background-color: #f0f0f0;
-}
 /* _content/WebApp/Components/Pages/Profile.razor.rz.scp.css */
 .profile-container[b-rcsjrqt2hw] {
     max-width: 1000px;

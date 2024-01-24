@@ -48,5 +48,4 @@
         document.documentElement.style.setProperty("--font-color-2-hover", "#ccc");
         //document.documentElement.classList.remove('dark');
     }
-    console.log(mode);
 }
